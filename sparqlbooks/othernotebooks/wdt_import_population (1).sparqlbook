@@ -1,0 +1,194 @@
+[
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "## Import to Allegrograph\n\nIn this notebook we describe the steps of data import to your Allegrograph repository.\n\n\nThe SPARQL queries are to be executed on the Allegrograph SPARQL Endpoint:\n\nFirst we check the basic properties of the population: name, sex, year of birth.",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "# qdcqSR9TGMHQBKSyen8ffd\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT DISTINCT ?item  ?itemLabel  ?gender ?year\r\n        WHERE {\r\n\r\n        # Q16533 = judge\r\n        ## note the service address            \r\n        SERVICE <https://query.wikidata.org/sparql>\r\n            {\r\n            {?item wdt:P106 wd:Q16533} # juges   \r\n            ?item wdt:P31 wd:Q5;  # Any instance of a human.\r\n                wdt:P569 ?birthDate;\r\n                wdt:P21 ?gender.\r\n        BIND(REPLACE(str(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\") AS ?year)\r\n         FILTER(xsd:integer(?year) > 1750  && xsd:integer(?year) < 1951) \r\n\r\n        ## Add this clause in order to fill the variable      \r\n        BIND ( ?itemLabel as ?itemLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }   \r\n        }\r\n        }\r\n        LIMIT 10\r\n    \r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Preparing to import data\n\n* Here we use the CONSTRUCT query to prepare the triples for import into a graph database.\n* We limit the test to a few rows to avoid displaying thousands of them.\n* Inspect and check the triplets that are generated.\n* Reuse if possible the Wikidata properties ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nCONSTRUCT \r\n        {?item  rdfs:label ?itemLabel.\r\n           ?item wdt:P21 ?gender.\r\n           ?item wdt:P569 ?year. \r\n           ?item  wdt:P31 wd:Q5. }\r\n        \r\n        WHERE {\r\n\r\n        ## note the service address            \r\n        SERVICE <https://query.wikidata.org/sparql>\r\n            {\r\n            {?item wdt:P106 wd:Q16533} # juges   \r\n            ?item wdt:P31 wd:Q5;  # Any instance of a human.\r\n                wdt:P569 ?birthDate;\r\n                wdt:P21 ?gender.\r\n        BIND(xsd:integer(REPLACE(str(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?year)\r\n        FILTER(?year > 1750  && ?year < 1951) \r\n\r\n        ## Add this clause in order to fill the variable      \r\n        BIND ( ?itemLabel as ?itemLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }   \r\n        }\r\n        }\r\n        LIMIT 10\r\n    \r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Import the triples into a dedicated graph\n\nTwo import strategies are possible: \n* directly through a federated query\n  * the query can be executed on a sparql-book \n  * or directly on the Allegrograph server, if it takes to much time to work through the notebook or it does not work\n* directly in Wikidata with import/export of the data \n  * execute a CONTRUCT query with the complete data (without the SERIVICE and LIMIT clause) and export it to the Turtle format (suffix: .ttl)\n  * then import the data into Allegrograph with the appropriate functionality\n\n\nIn all cases, activate in Allegrograph the 'Duplication suppression' of type SPOG, cf. menu: Repository control -> Manage duplicates -> Duplicate suppression type\n\n\nThe graph URI is in fact a URL pointing to a page with the description of the [imported data](../graphs/wikidata-imported-data.md)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX franzOption_serviceTimeout: <franz:120>\r\n\r\nINSERT {\r\n\r\n        ### Note that the data is imported into a named graph and not the DEFAULT one\r\n        GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?item  rdfs:label ?itemLabel.\r\n           ?item wdt:P21 ?gender.\r\n           ?item wdt:P569 ?year. \r\n           # ?item  wdt:P31 wd:Q5.\r\n           # modifier pour disposer de la propriété standard\r\n           ?item  rdf:type wd:Q5.\r\n           }\r\n}\r\n        \r\n        WHERE {\r\n\r\n        ## please note the service address            \r\n        SERVICE <https://query.wikidata.org/sparql>\r\n            {\r\n            {?item wdt:P106 wd:Q16533} # juges\r\n        #     UNION\r\n        #     {?item wdt:P106 wd:Q11063}  # astronomer\r\n        #     UNION\r\n        #     {?item wdt:P101 wd:Q333}     # astronomy\r\n        #     UNION\r\n        #     {?item wdt:P106 wd:Q169470}  # physicist\r\n        #     UNION\r\n        #     {?item wdt:P101 wd:Q413}     # physics   \r\n          \r\n            ?item wdt:P31 wd:Q5;  # Any instance of a human.\r\n                wdt:P569 ?birthDate;\r\n                wdt:P21 ?gender.\r\n        BIND(xsd:integer(REPLACE(str(?birthDate), \"(.*)([0-9]{4})(.*)\", \"$2\")) AS ?year)\r\n        FILTER(?year > 1750  && ?year < 1951) \r\n\r\n        ## Add this clause in order to fill the variable      \r\n        BIND ( ?itemLabel as ?itemLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }   \r\n        }\r\n        }\r\n        \r\n    \r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "#### Correctif si la requête précédente a été réalisée avec wdt:P31 à la place de rdf:type\n\n* rdf:tpye permet d'indiquer explicitement que wd:Q5 est un type RDF et donc vituellement une classe\n* noter qu'il faut exécuter cette requête DIRECTEMENT sur le serveur Allegrograph  ",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n\r\nDELETE {?item  wdt:P31 wd:Q5}\r\nINSERT {?item rdf:type wd:Q5}\r\nWHERE { GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n       {\r\n            ?item wdt:P31 wd:Q5.\r\n        }\r\n       }\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "#### Add a label to the Person class\n\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n\r\nINSERT DATA {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n    {\r\n        wd:Q5 rdfs:label \"Person\".\r\n    }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Add the gender class",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "###  Inspect the genders:\r\n# number of different countries\r\n\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE\r\n   {\r\n   SELECT DISTINCT ?gender\r\n   WHERE {\r\n      GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n         {\r\n            ?s wdt:P21 ?gender.\r\n         }\r\n      }\r\n   }",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Insert the class 'gender' for all countries\r\n# Please note that strictly speaking Wikidata has no ontology,\r\n# therefore no classes. We add this for our convenience\r\n\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nWITH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\nINSERT {\r\n   ?gender rdf:type wd:Q48264.\r\n}\r\nWHERE\r\n   {\r\n   SELECT DISTINCT ?gender\r\n   WHERE {\r\n         {\r\n            ?s wdt:P21 ?gender.\r\n         }\r\n      }\r\n   }",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\nPREFIX owl: <http://www.w3.org/2002/07/owl#>\r\n\r\nINSERT DATA {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n    {\r\n        wd:Q48264 rdfs:label \"Gender Identity\".\r\n    }\r\n}\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Verify imported triples and add labels to genders",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of triples in the graph\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s ?p ?o}\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons with more than one label : no person\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s rdf:label ?o}\r\n}\r\nGROUP BY ?s\r\nHAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Explore the gender",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons having more than one gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?s (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s wdt:P21 ?gen}\r\n}\r\nGROUP BY ?s\r\nHAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons per gender\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?gen (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s wdt:P21 ?gen}\r\n}\r\nGROUP BY ?gen\r\n#HAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons per gender in relation to a period\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\n\r\nSELECT ?gen (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s wdt:P21 ?gen;\r\n            wdt:P569 ?birthDate.\r\n        FILTER (?birthDate < '1900')     \r\n          }\r\n}\r\nGROUP BY ?gen\r\n#HAVING (?n > 1)",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Add the label to the gender\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?gen ?genLabel\r\nWHERE {\r\n\r\n    \r\n\r\n    {SELECT DISTINCT ?gen\r\n    WHERE {\r\n        GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>    \r\n            {?s wdt:P21 ?gen}\r\n    }\r\n    }   \r\n\r\n    SERVICE  <https://query.wikidata.org/sparql> {\r\n        ## Add this clause in order to fill the variable      \r\n        BIND(?gen as ?gen)\r\n        BIND ( ?genLabel as ?genLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n    }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Add the label to the gender\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nCONSTRUCT {\r\n     ?gen rdfs:label ?genLabel\r\n    \r\n} \r\nWHERE {\r\n\r\n    \r\n\r\n    {SELECT DISTINCT ?gen\r\n    WHERE {\r\n        GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>    \r\n            {?s wdt:P21 ?gen}\r\n    }\r\n    }   \r\n\r\n    SERVICE  <https://query.wikidata.org/sparql> {\r\n        ## Add this clause in order to fill the variable      \r\n        BIND(?gen as ?gen)\r\n        BIND ( ?genLabel as ?genLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n    }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Add the label to the gender: INSERT\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nWITH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md> \r\nINSERT {\r\n     ?gen rdfs:label ?genLabel\r\n    \r\n} \r\nWHERE {    \r\n\r\n    {SELECT DISTINCT ?gen\r\n    WHERE {\r\n        GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>    \r\n            {?s wdt:P21 ?gen}\r\n    }\r\n    }   \r\n\r\n    SERVICE  <https://query.wikidata.org/sparql> {\r\n        ## Add this clause in order to fill the variable      \r\n        BIND(?gen as ?gen)\r\n        BIND ( ?genLabel as ?genLabel)\r\n        SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }  \r\n    }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Verify data insertion - using only Allegrograph data\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX wikibase: <http://wikiba.se/ontology#>\r\nPREFIX bd: <http://www.bigdata.com/rdf#>\r\n\r\nSELECT ?gen ?genLabel ?n\r\nWHERE\r\n{\r\n    {\r\n    SELECT ?gen (COUNT(*) as ?n)\r\n        WHERE {\r\n            GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>  \r\n                    {\r\n            ?s wdt:P21 ?gen.\r\n            }\r\n        }    \r\n        GROUP BY ?gen        \r\n    }    \r\n    ?gen rdfs:label ?genLabel\r\n    }   \r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 1,
+    "language": "markdown",
+    "value": "### Prepare data to analyse",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "PREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\n\r\nSELECT ?s ?label ?birthDate ?gen\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nORDER BY ?birthDate\r\nLIMIT 10",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Number of persons\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {\r\n          # ?s wdt:P31 wd:Q5 \r\n          ?s a wd:Q5\r\n          }\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Personnes avec choix aléatoire de modalités pour variables doubles\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\n\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\nLIMIT 10\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nSELECT (COUNT(*) as ?n)\r\nWHERE {\r\nSELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) (MAX(?gen) as ?gen)\r\nWHERE {\r\n    GRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n        {?s wdt:P21 ?gen;\r\n            rdfs:label ?label;\r\n            wdt:P569 ?birthDate.\r\n          }\r\n}\r\nGROUP BY ?s\r\n}",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Ajouter le label pour la propriété \"date of birth\"\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nINSERT DATA {\r\nGRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n{    wdt:P569 rdfs:label \"date of birth\"\r\n}    \r\n}\r\n\r\n",
+    "metadata": {}
+  },
+  {
+    "kind": 2,
+    "language": "sparql",
+    "value": "### Nombre de personnes avec propriétés de base sans doublons (choix aléatoire)\r\n\r\nPREFIX wd: <http://www.wikidata.org/entity/>\r\nPREFIX wdt: <http://www.wikidata.org/prop/direct/>\r\nPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n\r\nINSERT DATA {\r\nGRAPH <https://github.com/TanguyGodat/Judges/blob/main/graphs/wikidata_imported_data.md>\r\n{    wdt:P21 rdfs:label \"sex or gender\"\r\n}    \r\n}\r\n\r\n",
+    "metadata": {}
+  }
+]
