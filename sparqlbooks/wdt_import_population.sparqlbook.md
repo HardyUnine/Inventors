@@ -118,7 +118,7 @@ INSERT {
         ## please note the service address            
         SERVICE <https://query.wikidata.org/sparql>
             {
-            {?item wdt:P106 wd:Q2021864}  # inventor
+            {?item wdt:P106 wd:Q205375}  # inventor
             UNION
             {?item wdt:P31 wd:Q5}         # human (general class for all humans)   
           
