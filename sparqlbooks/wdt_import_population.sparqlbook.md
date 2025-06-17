@@ -13,23 +13,27 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX bd: <http://www.bigdata.com/rdf#>
 
-SELECT DISTINCT ?item ?itemLabel ?gender ?year
-WHERE {
-  SERVICE <https://query.wikidata.org/sparql> {
-    {?item wdt:P106 wd:Q2021864}  # inventor
-    UNION
-    {?item wdt:P31 wd:Q5}         # human (general class for all humans)
+SELECT DISTINCT ?item  ?itemLabel  ?gender ?year
+        WHERE {
+
+        # Q205375 = inventors
+        ## note the service address            
+        SERVICE <https://query.wikidata.org/sparql>
+            {
+            {?item wdt:P106 wd:Q205375} # inventors   
+            ?item wdt:P31 wd:Q5;  # Any instance of a human.
+                wdt:P569 ?birthDate;
+                wdt:P21 ?gender.
+        BIND(REPLACE(str(?birthDate), "(.*)([0-9]{4})(.*)", "$2") AS ?year)
+         FILTER(xsd:integer(?year) > 1750  && xsd:integer(?year) < 2020) 
+
+        ## Add this clause in order to fill the variable      
+        BIND ( ?itemLabel as ?itemLabel)
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }   
+        }
+        }
     
-    ?item wdt:P31 wd:Q5;   # Any instance of a human.
-          wdt:P569 ?birthDate;
-          wdt:P21 ?gender.
-    BIND(year(?birthDate) as ?year)
-    FILTER(xsd:integer(?year) > 1750 && xsd:integer(?year) < 2001)
-  }
-  BIND (?itemLabel as ?itemLabel)
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" }
-}
-LIMIT 10
+
 
     
 
@@ -50,36 +54,28 @@ PREFIX bd: <http://www.bigdata.com/rdf#>
 CONSTRUCT 
         {?item  rdfs:label ?itemLabel.
            ?item wdt:P21 ?gender.
-           ?item wdt:P569 ?year.
-           # ?item  wdt:P31 wd:Q5.
-           # Noter qu'on odifie pour disposer de la propriété standard
-           # pour déclarer l'appartenance d'une instance à une classe
-           ?item  rdf:type wd:Q5. }
+           ?item wdt:P569 ?year. 
+           ?item  wdt:P31 wd:Q5. }
         
         WHERE {
 
         ## note the service address            
         SERVICE <https://query.wikidata.org/sparql>
             {
-            {?item wdt:P106 wd:Q2021864}  # inventor
-            UNION
-            {?item wdt:P31 wd:Q5}         # human (general class for all humans)   
-          
+            {?item wdt:P106 wd:Q205375} # inventors  
             ?item wdt:P31 wd:Q5;  # Any instance of a human.
                 wdt:P569 ?birthDate;
                 wdt:P21 ?gender.
-        BIND(year(?birthDate) as ?year)
-        #BIND(xsd:integer(REPLACE(str(?birthDate), "(.*)([0-9]{4})(.*)", "$2")) AS ?year)
-        FILTER(?year > 1750  && ?year < 2001) 
+        BIND(xsd:integer(REPLACE(str(?birthDate), "(.*)([0-9]{4})(.*)", "$2")) AS ?year)
+        FILTER(?year > 1750  && ?year < 2020) 
 
         ## Add this clause in order to fill the variable      
         BIND ( ?itemLabel as ?itemLabel)
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }   
         }
         }
-        LIMIT 5
+        LIMIT 10
     
-
 ```
 ### Import the triples into a dedicated graph
 
@@ -107,7 +103,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 INSERT {
 
         ### Note that the data is imported into a named graph and not the DEFAULT one
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+        GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?item  rdfs:label ?itemLabel.
            ?item wdt:P21 ?gender.
            ?item wdt:P569 ?year. 
@@ -152,7 +148,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 INSERT DATA {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
     {
         wd:Q5 rdfs:label "Person".
     }
@@ -175,7 +171,7 @@ WHERE
    {
    SELECT DISTINCT ?gender
    WHERE {
-      GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+      GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
          {
             ?s wdt:P21 ?gender.
          }
@@ -192,7 +188,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
-WITH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+WITH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 INSERT {
    ?gender rdf:type wd:Q48264.
 }
@@ -214,7 +210,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 INSERT DATA {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
     {
         wd:Q48264 rdfs:label "Gender Identity".
     }
@@ -227,7 +223,7 @@ INSERT DATA {
 ### Number of triples in the graph
 SELECT (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s ?p ?o}
 }
 ```
@@ -236,7 +232,7 @@ WHERE {
 ### Number of persons with more than one label : no person
 SELECT (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s rdf:label ?o}
 }
 GROUP BY ?s
@@ -251,7 +247,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?s (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s wdt:P21 ?gen}
 }
 GROUP BY ?s
@@ -265,7 +261,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?gen (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s wdt:P21 ?gen}
 }
 GROUP BY ?gen
@@ -279,7 +275,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?gen (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s wdt:P21 ?gen;
             wdt:P569 ?birthDate.
         FILTER (?birthDate < '1900')     
@@ -307,7 +303,7 @@ WHERE {
 
     {SELECT DISTINCT ?gen
     WHERE {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>    
+        GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>    
             {?s wdt:P21 ?gen}
     }
     }   
@@ -340,7 +336,7 @@ WHERE {
 
     {SELECT DISTINCT ?gen
     WHERE {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>    
+        GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>    
             {?s wdt:P21 ?gen}
     }
     }   
@@ -363,7 +359,7 @@ PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX bd: <http://www.bigdata.com/rdf#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-WITH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md> 
+WITH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md> 
 INSERT {
      ?gen rdfs:label ?genLabel
     
@@ -372,7 +368,7 @@ WHERE {
 
     {SELECT DISTINCT ?gen
     WHERE {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>    
+        GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>    
             {?s wdt:P21 ?gen}
     }
     }   
@@ -400,7 +396,7 @@ WHERE
     {
     SELECT ?gen (COUNT(*) as ?n)
         WHERE {
-            GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>  
+            GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>  
                     {
             ?s wdt:P21 ?gen.
             }
@@ -421,7 +417,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?s ?label ?birthDate ?genLabel
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {
             ## A property path passes through 
             # two or more properties
@@ -443,7 +439,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {
           # ?s wdt:P31 wd:Q5 
           ?s a wd:Q5
@@ -462,7 +458,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) 
     (MAX(?gen) as ?gen) (MAX(?genLabel) AS ?genLabel)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s wdt:P21 ?gen;
             rdfs:label ?label;
             wdt:P569 ?birthDate.
@@ -486,7 +482,7 @@ WHERE {
 SELECT  ?s (MAX(?label) as ?label) (xsd:integer(MAX(?birthDate)) as ?birthDate) 
             (MAX(?gen) as ?gen) (MAX(?genLabel) AS ?genLabel)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s wdt:P21 ?gen;
             rdfs:label ?label;
             wdt:P569 ?birthDate.
@@ -504,7 +500,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 INSERT DATA {
-GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 {    wdt:P569 rdfs:label "date of birth"
 }    
 }
@@ -520,7 +516,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 INSERT DATA {
-GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+GRAPH <https://https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 {    wdt:P21 rdfs:label "sex or gender"
 }    
 }
