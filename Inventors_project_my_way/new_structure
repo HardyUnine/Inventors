@@ -3,7 +3,6 @@ inventors-project/
 ├── rdf/                # fichiers RDF (.ttl) à importer
 ├── sparql/             # requêtes SPARQL documentées
 ├── notebooks/          # notebooks Jupyter
-├── pages/              # réponses en markdown ou HTML
 ├── catalog.md          # objectifs & questions
 ├── sources.md          # propriétés Wikidata utilisées
 ├── README.md           # résumé du projet
