@@ -10,7 +10,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s a wd:Q5.}
 }
 
@@ -22,7 +22,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 SELECT ?s ?label ?birthYear
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s a wd:Q5;
             rdfs:label ?label;
             wdt:P569 ?birthYear}
@@ -117,7 +117,7 @@ PREFIX bd: <http://www.bigdata.com/rdf#>
 SELECT ?field ?fieldLabel (COUNT(*) as ?n)
 WHERE
     {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+        GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 
         ## Find the persons in the imported graph
         {SELECT ?item
@@ -158,7 +158,7 @@ PREFIX bd: <http://www.bigdata.com/rdf#>
 SELECT ?field ?fieldLabel ?fieldClassLabel (COUNT(*) as ?n)
 WHERE
     {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+        GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 
         ## Find the persons in the imported graph
         {SELECT ?item
@@ -243,7 +243,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX bd: <http://www.bigdata.com/rdf#>
 
-WITH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+WITH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 INSERT {?item wdt:P101 ?field.
          ?field rdfs:label ?fieldLabel}
 WHERE
@@ -278,13 +278,13 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 
 INSERT DATA {
-  GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+  GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
   {wdt:P101 rdfs:label 'field'.}
 }
 ```
 ### Add the field class
 
-This is not properly speaking a class, but we use it here as such: wd:Q12737077
+This is not properly speaking a class, but we use it here as such: wd:Q627436
 
 ```sparql
 ###  Inspect the fields:
@@ -300,7 +300,7 @@ WHERE
    {
    SELECT DISTINCT ?field
    WHERE {
-      GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+      GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
          {
             ?s wdt:P101 ?field.
          }
@@ -320,7 +320,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
-WITH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+WITH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 INSERT {
    ?field rdf:type wd:Q627436.
 }
@@ -344,7 +344,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 INSERT DATA {
-GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
     {    wd:Q627436 rdfs:label "Field of Work".
     }    
 }
@@ -366,7 +366,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?field ?fieldLabel (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?item wdt:P101 ?field.
         OPTIONAL {?field rdfs:label ?fieldLabel}    
           }
@@ -393,8 +393,8 @@ PREFIX bd: <http://www.bigdata.com/rdf#>
 
 SELECT (COUNT(*) as ?n)
 WHERE {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
-        {?item a wd:Q12737077.}
+        GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
+        {?item a wd:Q627436.}
         }
          
 ```
@@ -415,7 +415,7 @@ WHERE
         ## Find the fields in the imported graph
         {SELECT DISTINCT ?item
         WHERE 
-            {?item a wd:Q12737077.}
+            {?item a wd:Q627436.}
         ORDER BY ?item      
         LIMIT 10000
 
@@ -451,15 +451,15 @@ CONSTRUCT {
     ?item  wdt:P279 ?field.
     ?field rdfs:label ?fieldLabel.
     # rdf:type field
-    ?field a wd:Q12737077.
+    ?field a wd:Q627436.
     }
 WHERE
     {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+        GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         ## Find the persons in the imported graph
         {SELECT ?item
         WHERE 
-                {?item a wd:Q12737077.}
+                {?item a wd:Q627436.}
         ORDER BY ?item      
         LIMIT 10000
 
@@ -503,7 +503,7 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 
 INSERT DATA {
-  GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+  GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
   {wdt:P279 rdfs:label 'subclass of'.}
 }
 ```
@@ -522,19 +522,19 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX bd: <http://www.bigdata.com/rdf#>
 
-WITH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+WITH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 INSERT {
     ?item  wdt:P279 ?field.
     ?field rdfs:label ?fieldLabel.
     # rdf:type field
-    ?field a wd:Q12737077.
+    ?field a wd:Q627436.
     }
 WHERE
     {
         ## Find the persons in the imported graph
         {SELECT ?item
         WHERE 
-                {?item a wd:Q12737077.}
+                {?item a wd:Q627436.}
         ORDER BY ?item      
         LIMIT 10000
 
@@ -566,8 +566,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?p ?label (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
-        {?s a wd:Q12737077;
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
+        {?s a wd:Q627436;
             ?p ?o.
         OPTIONAL {?p rdfs:label ?label}    
           }
@@ -587,11 +587,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?birthYear ?o ?oLabel ?p ?o1 ?o1Label
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?item a wd:Q5;
             wdt:P569 ?birthYear;
-            wdt:P106 ?o.
-        ?o a wd:Q12737077;
+            wdt:P101 ?o.
+        ?o a wd:Q627436;
             wdt:P279 ?o1.
         OPTIONAL {?o rdfs:label ?oLabel}    
         OPTIONAL {?o1 rdfs:label ?o1Label}    
@@ -615,13 +615,13 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?parentfield ?parentfieldlabel (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s a wd:Q5.
         
-        # ?s wdt:P106 ?field.
+        # ?s wdt:P101 ?field.
         # ?field wdt:P279 ?parentfield
         ## property path:
-        ?s  wdt:P106/wdt:P279  ?parentfield
+        ?s  wdt:P101/wdt:P279  ?parentfield
 
         OPTIONAL {?parentfield rdfs:label ?parentfieldlabel}    
           }
@@ -646,11 +646,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?parentfield ?parentfieldlabel (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s a wd:Q5.
         
         ## property path:
-        ?s  wdt:P106/wdt:P279/wdt:P279  ?parentfield
+        ?s  wdt:P101/wdt:P279/wdt:P279  ?parentfield
 
         OPTIONAL {?parentfield rdfs:label ?parentfieldlabel}    
           }
@@ -677,11 +677,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?parentfield ?parentfieldlabel (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s a wd:Q5.
         
         ## property path:
-        ?s  wdt:P106/wdt:P279/wdt:P279/wdt:P279  ?parentfield
+        ?s  wdt:P101/wdt:P279/wdt:P279/wdt:P279  ?parentfield
 
         OPTIONAL {?parentfield rdfs:label ?parentfieldlabel}    
           }
@@ -707,11 +707,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?parentfield ?parentfieldlabel (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s a wd:Q5.
         
         ## property path:
-        ?s  wdt:P106 ?c1.
+        ?s  wdt:P101 ?c1.
         ?c1 wdt:P279 ?c2.
         ?c2 wdt:P279 ?c3.
         ?c3 wdt:P279  ?parentfield
@@ -745,11 +745,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?parentfield ?parentfieldlabel (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {?s a wd:Q5.
         
         ## property path:
-        ?s  wdt:P106 ?c1.
+        ?s  wdt:P101 ?c1.
         ?c1 wdt:P279 ?c2.
         ?c2 wdt:P279 ?c3.
         ?c3 wdt:P279 ?c4.
@@ -783,7 +783,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?s ?o ?oClass
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {
             ## retrieves all the classifications:
             ?s wdt:P279 ?o.
@@ -804,11 +804,11 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-WITH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+WITH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 # Protection #  DELETE {?s  wdt:P279 ?o .
     ?o rdfs:label ?fieldLabel.
     # rdf:type field
-    ?o a wd:Q12737077.}
+    ?o a wd:Q627436.}
 WHERE {
         {
             ## retrieves all the classifications:
@@ -834,12 +834,12 @@ PREFIX bd: <http://www.bigdata.com/rdf#>
 SELECT ?field ?fieldLabel ?metaclass ?metaclassLabel ?n
 WHERE
     {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+        GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         ## Find the persons in the imported graph
         {SELECT ?field ?fieldLabel (COUNT(*) as ?n)
         WHERE 
                 {?item a wd:Q5.
-                ?item wdt:P106 ?field.
+                ?item wdt:P101 ?field.
                 ?field rdfs:label ?fieldLabel}
         GROUP BY ?field ?fieldLabel      
 
@@ -885,7 +885,7 @@ SELECT ?field ?fieldLabel
           ?parentKnowledgeClassification ?parentKnowledgeClassificationLabel
           (COUNT(*) as ?n)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {SELECT ?field ?fieldLabel
           ?parentfield ?parentfieldlabel 
           ?parentKnowledgeClassification ?parentKnowledgeClassificationLabel
@@ -893,7 +893,7 @@ WHERE {
         WHERE
         {?s a wd:Q5.
         
-        ?s  wdt:P106 ?field.
+        ?s  wdt:P101 ?field.
         ?field  wdt:P279  ?parentfield.
         ?field rdfs:label ?fieldLabel.
         ?parentfield rdfs:label ?parentfieldlabel    
@@ -944,7 +944,7 @@ SELECT DISTINCT
           #?parentKnowledgeClassification ?parentKnowledgeClassificationLabel 
           # (SUM(?n) as ?sn)
 WHERE {
-    GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+    GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
         {
           SELECT ?field ?fieldLabel
           ?parentfield (COUNT(*) as ?n)
@@ -952,7 +952,7 @@ WHERE {
         WHERE
         {
           ?s a wd:Q5;  
-              wdt:P106 ?field.
+              wdt:P101 ?field.
           ?field rdfs:label ?fieldLabel.
           ?field  wdt:P279  ?parentfield.
           }  
@@ -1002,7 +1002,7 @@ PREFIX bd: <http://www.bigdata.com/rdf#>
 SELECT ?item ?birthYear ?field ?fieldLabel ?field_1 ?field_1Label
 WHERE
     {
-        GRAPH <https://github.com/Sciences-historiques-numeriques/astronomers/blob/main/graphs/wikidata-imported-data.md>
+        GRAPH <https://github.com/HardyUnine/Inventors/blob/main/graphs/wikidata_imported_data.md>
 
         ## Find the persons in the imported graph
         {SELECT ?item ?birthYear
@@ -1019,8 +1019,8 @@ WHERE
         ## 
         SERVICE <https://query.wikidata.org/sparql>
             {
-                ?item wdt:P106 ?field.
-                ?item wdt:P106 ?field_1.
+                ?item wdt:P101 ?field.
+                ?item wdt:P101 ?field_1.
                 FILTER (str(?fieldLabel) < str(?field_1Label))
                 BIND (?fieldLabel as ?fieldLabel)
                 BIND (?field_1Label as ?field_1Label)
