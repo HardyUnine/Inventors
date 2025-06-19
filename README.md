@@ -1,3 +1,16 @@
-# Inventors
+## Deux versions du projet
 
-In the context of my course on Applying digital methods to the humanities and history
+Pour répondre aux attentes pédagogiques, j’ai conservé deux **dossier** séparés dans ce dépôt :
+
+1. **Version “Professeur” (incomplète)**  
+   - Contient le **squelette de code** et les **exemples fournis par le professeur**.  
+   - Structure de dossiers, quelques requêtes SPARQL de base et des notebooks modifiés pour mon sujet.  
+   - **État :** non terminé, car je me suis rapidement perdu dans le code SQL donné en classe.
+
+2. **Version “Personnelle” (terminée)**  
+   - Repart de zéro pour suivre **mon propre workflow clair** :  
+     1. Extraction SPARQL complète  
+     2. Conversion CSV → TTL et import via API REST (scripts Python générés avec ChatGPT)  
+     3. Analyse Q1–Q4 dans des notebooks Jupyter  
+     4. Documentation intégrale dans le `README.md`  
+   - **État :** finalisée, avec tous les buts atteints (évolution temporelle, tests statistiques, analyse réseau, export RDF compressé).  
