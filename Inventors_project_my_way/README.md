@@ -242,7 +242,7 @@ plt.show()
    * Les noeuds sont **colorés** selon la communauté détectée; les arêtes sont semi-transparentes pour réduire le bruit visuel.
 
 ---
-
+![image](notebooks/q4_1_network.png)
 Cette méthode permet de repérer rapidement les **groupes d’inventeurs** les plus étroitement liés par leurs collaborations (co-inventions) mais nous donne pas d'informations précises.
 
 
