@@ -2,12 +2,12 @@
 
 Pour répondre aux attentes pédagogiques, j’ai conservé deux **dossier** séparés dans ce dépôt :
 
-1. **Version “Professeur” (incomplète)**  
+1. **Version “Professeurs"**  
    - Contient le **squelette de code** et les **exemples fournis par le professeur**.  
    - Structure de dossiers, quelques requêtes SPARQL de base et des notebooks modifiés pour mon sujet.  
    - **État :** non terminé, car je me suis rapidement perdu dans le code SQL donné en classe.
 
-2. **Version “Personnelle” (terminée)**  
+2. **Version “Personnelle”**  
    - Repart de zéro pour suivre **mon propre workflow clair** :  
      1. Extraction SPARQL complète  
      2. Conversion CSV → TTL et import via API REST (scripts Python générés avec ChatGPT)  
