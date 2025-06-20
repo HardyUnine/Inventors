@@ -1,5 +1,5 @@
 @prefix wdt: <http://www.wikidata.org/prop/direct/> .
-@prefix wd: <http://www.wikidata.org/entity/> .
+@prefix wd:  <http://www.wikidata.org/entity/> .
 
 <http://www.wikidata.org/entity/Q80> wdt:P800 <http://www.wikidata.org/entity/Q11288> .
 <http://www.wikidata.org/entity/Q80> wdt:P800 <http://www.wikidata.org/entity/Q8811> .
