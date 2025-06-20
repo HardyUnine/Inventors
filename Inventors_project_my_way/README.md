@@ -114,11 +114,11 @@ plt.show()
 
 **p-value < 10⁻⁶** : le test indique une dépendance statistiquement significative entre le genre et la nationalité.
 
-**Attention à l’interprétation :**  
-Cette p-value extrêmement basse est en partie due au fait que, pour de nombreux pays, il n’y a **aucune inventrice** recensée, ce qui crée de nombreuses cases vides dans le tableau de contingence et accentue artificiellement l’écart entre hommes et femmes.  
+**Attention:**  
+Cette p-value très basse est en partie due au fait que, pour de nombreux pays, il n’y a **aucune inventrice** recensée, ce qui crée de nombreuses cases vides dans le tableau de contingence et accentue artificiellement l’écart entre hommes et femmes.  
 En regroupant les pays hors top 10 dans la catégorie “Autres” et en se concentrant sur des effectifs suffisants, on limite ce biais tout en conservant le signal principal mais la p-value reste biaisé.
 
-*(Voir `notebooks/Query_2.ipynb` pour le détail de l’analyse)*  
+*(Voir `notebooks/Query_2.ipynb`)*  
 
 ---
 
@@ -127,6 +127,7 @@ En regroupant les pays hors top 10 dans la catégorie “Autres” et en se conc
 **Question :**
 Le genre des inventeurs varie-t-il selon leur **siècle de naissance** ?
 
+Cette question rejoins un peu Q1 mais sous un angle différent et selon moi reste intéressante.
 ### 1. Extraction SPARQL
 
 ```sparql
