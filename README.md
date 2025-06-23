@@ -1,6 +1,6 @@
 ## Deux versions du projet
 
-Pour répondre aux attentes pédagogiques, j’ai conservé deux **dossier** séparés dans ce dépôt :
+J’ai conservé deux **dossier** séparés dans ce dépôt :
 
 1. **Version “Professeurs"**  
    - Contient le **squelette de code** et les **exemples fournis par le professeur**.  
